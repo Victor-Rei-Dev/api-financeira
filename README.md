@@ -13,7 +13,7 @@ Sistema de transferências bancárias com Node.js e SQL Server. O servidor roda 
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/Victor-Rei-Dev/api-financeiro.git
+git clone https://github.com/Victor-Rei-Dev/api-financeira.git
 cd api-financeiro
 ```
 
