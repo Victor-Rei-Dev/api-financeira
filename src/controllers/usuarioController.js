@@ -1,4 +1,5 @@
 const { sql } = require('../database/connection');
+const { gerarToken } = require('../middlewares/auth');
 
 async function  cadastro(req,res) {
     const { nome,email,senha,tel,cpf,tipo } = req.body;
@@ -115,10 +116,13 @@ try{
 
     const usuario = result.recordset[0];
 
+    const token = gerarToken(usuario);
+
    
 
     res.status(200).json({
         success:true,
+        token: token,
         usuario : {
             id: usuario.id_usu,
             nome: usuario.nome,
