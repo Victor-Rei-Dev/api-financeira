@@ -7,6 +7,7 @@ Sistema de transferências bancárias com Node.js e SQL Server. O servidor roda 
 - Node.js
 - Express
 - SQL Server
+- JWT
 
 ## Como rodar o projeto via terminal (bash ou cmd)
 
@@ -82,7 +83,7 @@ curl -X POST http://localhost:3000/api/login \
 ## Funcionalidades
 
 -  Cadastro de usuários com hash de senha (SHA-256)
--  Login simples
+-  Login com jwt e verificação de token
 -  Busca de usuários e contas
 -  Transferências com controle de concorrência (UPDLOCK)
 -  Limite diário de transferência, sendo o padrão R$ 5.000,00
