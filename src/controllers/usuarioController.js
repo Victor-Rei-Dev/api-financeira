@@ -7,6 +7,19 @@ async function  cadastro(req,res) {
         return res.status(400).json({error:'Campos obrigatórios faltando'});
     }
 
+    if (!email.includes('@') || !email.includes('.')) {
+        return res.status(400).json({error:'Email inválido'});
+    }
+
+    if (tel.length !== 11) {
+        return res.status(400).json({error:'Telefone inválido'});
+    }
+
+    if (cpf.length !== 14) {
+        return res.status(400).json({error:'CPF inválido'});
+    }
+
+
     try {
         const request = new sql.Request();
         request.input('nome',sql.VarChar(255),nome);
@@ -18,7 +31,7 @@ async function  cadastro(req,res) {
 
         const result = await request.execute('sp_cadastro');
 
-        res.json(
+        res.status(201).json(
             {
                 success:true
             }
@@ -50,7 +63,7 @@ async function buscarUsuario(req,res) {
         if(result.recordset.length == 0) {
           return res.status(404).json({error:'Usuário não encontrado'});
         }
-        res.json({
+        res.status(200).json({
           success:true,
           usuario: result.recordset[0]  
         });
@@ -74,9 +87,7 @@ try{
 
     await request.execute('sp_deletar_usuario');
 
-    res.json({
-        success:true
-    });
+    res.status(204).send();
 }
 catch(err) {
     console.log('Erro',err);
@@ -106,7 +117,7 @@ try{
 
    
 
-    res.json({
+    res.status(200).json({
         success:true,
         usuario : {
             id: usuario.id_usu,

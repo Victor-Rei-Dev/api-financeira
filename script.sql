@@ -92,7 +92,7 @@ BEGIN TRY
 			SELECT @saldo_antes_enviador = saldo FROM conta WITH (UPDLOCK) WHERE id_conta = @id_enviador
 
 			IF @saldo_antes_enviador IS NULL
-				THROW 50001,'Conta de origem não existente',1
+				THROW 50001,'Conta de origem nï¿½o existente',1
 
 			IF @saldo_antes_enviador < @valor
 				THROW 50002,'Saldo insuficiente',1
@@ -113,7 +113,7 @@ BEGIN TRY
 				END
 
 				IF @limite_pedido < @valor+@valor_hoje
-					THROW 50007,'Limite diário excedido',1
+					THROW 50007,'Limite diï¿½rio excedido',1
 
 				UPDATE limite_diario
 				SET valor_hoje = @valor + @valor_hoje WHERE data = @data_atual AND id_conta = @id_enviador
@@ -122,7 +122,7 @@ BEGIN TRY
 			SELECT @conta_enviado = id_conta FROM conta WITH (UPDLOCK) WHERE id_conta = @id_enviado
 			
 			IF @conta_enviado IS NULL
-				THROW 50003,'Conta de destino não existente',1
+				THROW 50003,'Conta de destino nï¿½o existente',1
 
 			DECLARE @saldo_antes_enviado DECIMAL(18,2)
 			SELECT @saldo_antes_enviado = saldo FROM conta WHERE id_conta = @id_enviado
@@ -162,7 +162,7 @@ SET NOCOUNT ON
 	BEGIN TRANSACTION
 
 	IF EXISTS (SELECT 1 FROM usuario WHERE email = @email OR cpf = @cpf)
-		THROW 50004,'Usuário já cadastrado',1
+		THROW 50004,'Usuï¿½rio jï¿½ cadastrado',1
 
 	INSERT INTO usuario(nome,email,senha,tel,cpf) VALUES
 	(@nome,@email,HASHBYTES('SHA2_256', @senha),@tel,@cpf)
@@ -183,32 +183,6 @@ SET NOCOUNT ON
 END
 
 GO
-CREATE  PROC sp_depositar_saldo @valor DECIMAL(18,2),@cpf VARCHAR(14)
-AS
-BEGIN
-SET NOCOUNT ON
-BEGIN TRY
-BEGIN TRANSACTION
-	UPDATE c
-	SET c.saldo = c.saldo + @valor
-	FROM conta c
-	INNER JOIN usuario u ON c.id_usu = u.id_usu
-	 WHERE u.cpf = @cpf
-	
-	IF @@ROWCOUNT = 0
-		THROW 50005,'CPF não encontrado',1
-	COMMIT
-	END TRY
-BEGIN CATCH
-	IF @@TRANCOUNT > 0
-		ROLLBACK
-
-	;THROW
-END CATCH
-END
-
-
-GO
 CREATE PROC sp_depositar_saldo_id @valor DECIMAL(18,2), @id_conta INT
 AS
 BEGIN
@@ -221,7 +195,7 @@ BEGIN TRANSACTION
 	 WHERE c.id_conta = @id_conta
 	
 	IF @@ROWCOUNT = 0
-		THROW 50005,'Conta não encontrada',1
+		THROW 50005,'Conta nï¿½o encontrada',1
 	COMMIT
 	END TRY
 BEGIN CATCH
@@ -238,9 +212,9 @@ BEGIN
 SET NOCOUNT ON
 BEGIN TRY
 	IF NOT EXISTS (SELECT 1 FROM conta WHERE id_conta = @id_conta)
-			THROW 50005,'Conta não encontrada',1
+			THROW 50005,'Conta nï¿½o encontrada',1
 	IF NOT EXISTS (SELECT 1 FROM transacao WHERE id_enviador = @id_conta OR id_enviado = @id_conta)
-		THROW 50006,'Nenhuma transação realizada.',1
+		THROW 50006,'Nenhuma transaï¿½ï¿½o realizada.',1
 	SELECT 
             t.data_hora,
             t.valor,
@@ -282,7 +256,7 @@ SET NOCOUNT ON
 BEGIN TRY
 BEGIN TRANSACTION
 	IF NOT EXISTS (SELECT 1 FROM conta WHERE id_conta = @id_conta)
-		THROW 50005, 'Conta não encontrada.',1
+		THROW 50005, 'Conta nï¿½o encontrada.',1
 
 		UPDATE conta
 		SET limite_diario_vigente = @limite WHERE id_conta = @id_conta
@@ -306,10 +280,10 @@ BEGIN TRANSACTION
 	SELECT @saldo = saldo FROM conta WHERE id_conta = @id_conta
 
 	IF @saldo IS NULL
-		THROW 50005,'Conta não encontrada',1
+		THROW 50005,'Conta nï¿½o encontrada',1
 	
 	IF @saldo > 0
-		THROW 50008, 'Não é possível fechar conta com saldo positivo', 1
+		THROW 50008, 'Nï¿½o ï¿½ possï¿½vel fechar conta com saldo positivo', 1
 		
 	UPDATE conta SET ativo = 0 WHERE id_conta = @id_conta
 	COMMIT
@@ -330,7 +304,7 @@ SET NOCOUNT ON
 BEGIN TRANSACTION
 
 	IF EXISTS (SELECT 1 FROM conta WHERE id_usu = @id_usu AND ativo = 1)
-		THROW 50009,'Feche a conta antes de apagar o usuário',1
+		THROW 50009,'Feche a conta antes de apagar o usuï¿½rio',1
 
 	UPDATE usuario SET ativo = 0 WHERE id_usu = @id_usu
 	COMMIT
@@ -369,7 +343,7 @@ BEGIN
 	SET NOCOUNT ON
 		BEGIN TRY
 			IF @email IS NULL OR @senha IS NULL
-				THROW 500010,'Dados inválidos',1
+				THROW 500010,'Dados invï¿½lidos',1
 
 			SELECT id_usu, nome, email, ativo
 			FROM usuario 

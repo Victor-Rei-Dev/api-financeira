@@ -6,13 +6,13 @@ async function transferir(req,res) {
     const {id_enviado,valor,descricao} = req.body;
 
     if (!id_enviador || id_enviador <= 0) {
-        return res.status(400).json({error:'ID original é obrigatório'});
+        return res.status(400).json({error:'ID do enviador é obrigatório'});
     }
     if (!id_enviado || id_enviado <= 0) {
         return res.status(400).json({error:'ID de destino é obrigatório'});
     }
 
-    if (!valor || valor <=0) {
+    if (!valor || isNaN(valor) || valor <=0) {
         return res.status(400).json({error:'Valor transferido é obrigatório'});
     }
 
@@ -25,7 +25,7 @@ async function transferir(req,res) {
 
         await request.execute('sp_transacao');
 
-        res.json({
+        res.status(201).json({
             success:true
         });
 
@@ -50,10 +50,10 @@ try{
     const result = await request.execute('sp_extrato');
 
     if(result.recordset.length == 0){
-        return res.status(404).json({erro:'Conta não encontrada'});
+        return res.status(404).json({error:'Conta não encontrada'});
     }
 
-    res.json({
+    res.status(200).json({
         success:true,
         extrato: result.recordset
     });
@@ -75,7 +75,7 @@ async function depositarSaldo(req,res) {
         return res.status(400).json({error:'ID da conta é obrigatório'});
     }
 
-    if(!valor || valor <= 0) {
+    if(!valor || isNaN(valor) || valor <= 0) {
         return res.status(400).json({error:'Valor do saldo deve ser positivo'});
     }
     try {
@@ -87,7 +87,7 @@ async function depositarSaldo(req,res) {
 
        
 
-       res.json({
+       res.status(200).json({
         success:true
        });
     }
@@ -101,7 +101,7 @@ async function buscarConta(req,res) {
     const { id_conta } = req.params;
 
     if(!id_conta || id_conta <= 0) {
-        return res.status(400).json({erro:'ID da conta é obrigatório'});
+        return res.status(400).json({error:'ID da conta é obrigatório'});
     }
 
     try{
@@ -111,10 +111,10 @@ async function buscarConta(req,res) {
         const result =  await request.execute('sp_buscar_conta');
 
         if (result.recordset.length == 0){
-            return res.status(404).json({erro:'Conta não encontrada'});
+            return res.status(404).json({error:'Conta não encontrada'});
         }
 
-        res.json(
+        res.status(200).json(
             {
                 success:true,
                 conta:result.recordset[0]
@@ -141,9 +141,7 @@ async function deletarConta(req,res) {
 
         await request.execute('sp_deletar_conta');
         
-        res.json({
-            success:true
-        });
+        res.status(204).send();
     }
     catch(err) {
         console.log('Erro',err);
@@ -169,7 +167,7 @@ async function atualizarLimite(req,res) {
 
         await request.execute('sp_atualizar_limite');
 
-        res.json({
+        res.status(200).json({
             success:true
         });
 
