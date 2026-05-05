@@ -69,7 +69,7 @@ npm run dev
 ```bash
 curl -X POST http://localhost:3000/api/cadastrar \
   -H "Content-Type: application/json" \
-  -d '{"nome":"Joao","email":"joao@email.com","senha":"123","cpf":"12345678901","tel":"11111111111"}'
+  -d '{"nome":"Joao","email":"joao@email.com","senha":"123","cpf":"123.456.789-01","tel":"11111111111"}'
 ```
 
 ### Fazer login
